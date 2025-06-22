@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "mobilefrontend",
+    "slug": "mobilefrontend",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "mobilefrontend",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "entryPoint": "./App.tsx",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true
+    },
+    "web": {
+      "output": "single",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-notifications"
+    ]
+  }
+}
