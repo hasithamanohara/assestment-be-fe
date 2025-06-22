@@ -8,14 +8,13 @@ import gptRoutes from './src/routes/gptRoutes.js'
 import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './src/config/swaggerconfig.js';
+import 'dotenv/config';
 
 dotenv.config();
 
 const app = express();
 
 await connectDB(); 
-
-// console.log(process.env.OPENAI_API_KEY)
 
 //swagger doc
 app.use('/api-docs', 

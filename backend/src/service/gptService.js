@@ -1,16 +1,13 @@
 import OpenAI from "openai";
 import Course from "../models/courseModel.js";
+import dotenv from 'dotenv';
+dotenv.config();
 
 const openai = new OpenAI({
-  // apiKey: process.env.OPENAI_API_KEY,
-  //   // apiKey: process.env.OPENAI_API_KEY,
-  apiKey:
-    "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",
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 export const generateCourseRecommendations = async (prompt) => {
-
-  console.log('GPT_KEY:', process.env.GPT_KEY);
 
   const courses = await Course.find();
   const courseTitles = courses.map((course) => course.title).join(", ");
