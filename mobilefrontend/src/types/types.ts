@@ -25,5 +25,6 @@ export interface AuthResponse {
 }
 
 export interface GPTResponse {
+  data(data: any): unknown;
   recommendations: string;
 }

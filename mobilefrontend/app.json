@@ -17,14 +17,17 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.anonymous.mobilefrontend"
     },
     "web": {
       "output": "single",
       "bundler": "metro"
     },
-    "plugins": [
-      "expo-notifications"
-    ]
+    "extra": {
+      "eas": {
+        "projectId": "4a679649-1739-4fa7-9bd6-6f25cb88605a"
+      }
+    }
   }
 }

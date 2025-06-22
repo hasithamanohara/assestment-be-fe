@@ -11,7 +11,7 @@ const ChatGPTScreen: React.FC = () => {
   const handleRecommend = async () => {
     try {
       const response = await getCourseRecommendations(prompt);
-      setRecommendations(response.data.recommendations);
+      setRecommendations(response.recommendations);
     } catch (error) {
       Alert.alert('Error', 'Failed to get recommendations');
     }

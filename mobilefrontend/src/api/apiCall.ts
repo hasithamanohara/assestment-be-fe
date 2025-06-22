@@ -1,14 +1,13 @@
-import { API_URL } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { AuthResponse, Course, GPTResponse } from '../types/types';
 
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL: 'https://online-learning-api-2t3k.onrender.com',
   headers: { 'Content-Type': 'application/json' },
 });
 
-// Add JWT to requests
+// Add JWT token to all requests
 api.interceptors.request.use(async (config) => {
   const token = await AsyncStorage.getItem('token');
   if (token) {
@@ -17,16 +16,7 @@ api.interceptors.request.use(async (config) => {
   return config;
 });
 
-//user api
-// export const register = (username: string, password: string, role: string) =>
-//   api.post<AuthResponse>('/api/users/register', { username, password, role });
-// export const register = (
-//   username: string,
-//   email: string,
-//   password: string,
-//   role: 'student' | 'instructor'
-// ) => api.post<AuthResponse>('/api/users/register', { username, email, password, role });
-
+// Register
 export const register = async (
   username: string,
   email: string,
@@ -36,54 +26,194 @@ export const register = async (
   try {
     console.log('Registering:', { username, email, role });
 
-    const response = await api.post<AuthResponse>('http://localhost:3030/api/users/register', {
+    const response = await api.post<AuthResponse>('/api/users/register', {
       username,
       email,
       password,
-      role
+      role,
     });
 
     console.log('Registration success - Status:', response.status);
     console.log('Response data:', {
       token: response.data.token,
-      userId: response.data.user.id
+      userId: response.data.user.id,
     });
 
     return response;
-
   } catch (error: any) {
-    console.error('Registration failed -:', {
+    console.error('Registration failed:', {
       status: error.response?.status || 'No response',
       message: error.response?.data?.message || error.message,
       config: {
         url: error.config?.url,
-        method: error.config?.method
-      }
+        method: error.config?.method,
+      },
     });
     throw error;
   }
 };
 
+// Login
 export const login = (username: string, password: string) =>
   api.post<AuthResponse>('/api/users/login', { username, password });
 
-// export const getUser = () => api.get
 
-export const getCourses = () => api.get<Course[]>('/api/courses');
+//get user by id
+export const getUserByID = (userId: string) =>
+  api.post<AuthResponse>('/api/users/getUser', {userId});
 
-export const getMyCourses = () => api.get<Course[]>('/api/courses/my-courses');
+//update user data
+export const updateUserData = (username: String, email: String, password:String ) =>
+  api.post<AuthResponse>('/api/users/update', {username,email,password});
 
-export const getEnrolledCourses = () => api.get<Course[]>('/api/courses/enrolled');
+//delete user
+export const deleteUser = (userId: string) => {
+  console.log('Deleting user', userId);
+  return api.delete('/api/users/delete');
+};
 
-export const enrollCourse = (id: string) => api.post(`/api/courses/${id}/enroll`);
 
-export const createCourse = (title: string, description: string, content: string) =>
-  api.post<Course>('/api/courses', { title, description, content });
+  // Create a course instructor
+export const createCourse = async (
+  title: string,
+  description: string,
+  content: string
+): Promise<Course> => {
+  try {
+    const response = await api.post<Course>('api/course/createCourse', {
+      title,
+      description,
+      content,
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error('Create course failed:', {
+      status: error.response?.status || 'No response',
+      message: error.response?.data?.message || error.message,
+      config: {
+        url: error.config?.url,
+        method: error.config?.method,
+      },
+    });
+    throw error;
+  }
+};
 
-export const updateCourse = (id: string, title: string, description: string, content: string) =>
-  api.put<Course>(`/api/courses/${id}`, { title, description, content });
+// Enroll in a course student
+  export const enrollCourse = async (id: string): Promise<void> => {
+    try {
+      await api.post(`/api/course/${id}/enroll`);
+    } catch (error: any) {
+      console.error('Enroll course failed:', {
+        status: error.response?.status || 'No response',
+        message: error.response?.data?.message || error.message,
+        config: {
+          url: error.config?.url,
+          method: error.config?.method,
+        },
+      });
+      throw error;
+    }
+  };
 
-export const deleteCourse = (id: string) => api.delete(`/api/courses/${id}`);
+  // Update existing course instructor
+  export const updateCourse = async (
+    id: string,
+    title: string,
+    description: string,
+    content: string
+  ): Promise<Course> => {
+    try {
+      const response = await api.put<Course>(`/api/course/${id}`, {
+        title,
+        description,
+        content,
+      });
+      return response.data;
+    } catch (error: any) {
+      console.error('Update course failed:', {
+        status: error.response?.status || 'No response',
+        message: error.response?.data?.message || error.message,
+        config: {
+          url: error.config?.url,
+          method: error.config?.method,
+        },
+      });
+      throw error;
+    }
+  };
 
-export const getCourseRecommendations = (prompt: string) =>
-  api.post<GPTResponse>('/api/gpt/recommend', { prompt });
+  // Get all courses
+  export const getCourses = async () => {
+    try {
+      console.log('Fetching all courses...');
+      const response = await api.get<Course[]>('/api/course/getAllCourese');
+      console.log('all courses fetched:', response.data);
+      return response;
+
+    } catch (error: any) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  // student get  enrolled course
+  export const getMyCourses = async () => {
+    try {
+      console.log('Fetching my courses...');
+      const response = await api.get<Course[]>('/api/course/enrolled');
+      console.log('My courses fetched:', response.data);
+      return response;
+    } catch (error: any) {
+      console.error('Registration failed:', {
+        status: error.response?.status || 'No response',
+        message: error.response?.data?.message || error.message,
+        config: {
+          url: error.config?.url,
+          method: error.config?.method,
+        },
+      });
+      throw error;
+    }
+
+  };
+
+
+  // instructor get my course
+  export const getEnrolledCourses = () => api.get<Course[]>('/api/course/getmycourses');
+
+  // Delete a course
+  export const deleteCourse = async (id: string): Promise<void> => {
+    try {
+      await api.delete(`/api/course/${id}`);
+    } catch (error: any) {
+      console.error('Delete course failed:', {
+        status: error.response?.status || 'No response',
+        message: error.response?.data?.message || error.message,
+        config: {
+          url: error.config?.url,
+          method: error.config?.method,
+        },
+      });
+      throw error;
+    }
+  };
+
+
+  //gpt course recommendations
+  export const getCourseRecommendations = async (prompt: string): Promise<GPTResponse> => {
+    try {
+      const response = await api.post<GPTResponse>('/api/gpt/recommend', { prompt });
+      return response.data;
+    } catch (error: any) {
+      console.error('GPT recommendations failed:', {
+        status: error.response?.status || 'No response',
+        message: error.response?.data?.message || error.message,
+        config: {
+          url: error.config?.url,
+          method: error.config?.method,
+        },
+      });
+      throw error;
+    }
+  };

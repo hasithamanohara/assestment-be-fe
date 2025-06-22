@@ -37,7 +37,7 @@ const EnrolledCoursesScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>My Enrolled Courses</Text>
+      <Text style={styles.title}>My Courses</Text>
       <FlatList
         data={courses}
         renderItem={renderCourse}
