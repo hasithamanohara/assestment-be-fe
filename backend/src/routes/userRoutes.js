@@ -5,7 +5,6 @@ import auth from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-//student and instructor register
 router.post(
   '/register',
   [
